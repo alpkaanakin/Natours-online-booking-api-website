@@ -16,9 +16,6 @@ const DB = process.env.DATABASE.replace(
 );
 
 mongoose
-  // local database version
-  // .connect(process.env.DATABASE_LOCAL, {
-  // hosted database version
   .connect(DB, {
     // just some options to deal with deprecation warnings.
     useNewUrlParser: true,
