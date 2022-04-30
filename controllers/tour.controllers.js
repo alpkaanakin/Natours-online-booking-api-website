@@ -23,7 +23,6 @@ const uploadTourImages = upload.fields([
 
 const resizeTourImages = catchAsync(async (req, res, next) => {
   // if (!req.files.imageCover || !req.files.images) {
-  //   console.log("popokiz");
   //   return next();
   // }
 

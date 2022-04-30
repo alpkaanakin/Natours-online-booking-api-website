@@ -62,7 +62,7 @@ if (userPasswordForm)
       { currentPassword, password, passwordConfirm },
       'password'
     );
-    console.log("Popoluk")
+
 
 
     document.querySelector('.btn--save-password').textContent = 'Save password';

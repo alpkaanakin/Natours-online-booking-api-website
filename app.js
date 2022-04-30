@@ -3,6 +3,7 @@ const express = require("express");
 const morgan = require("morgan");
 const rateLimit = require("express-rate-limit");
 const helmet = require("helmet");
+const compression = require("compression");
 
 const xss = require("x-xss-protection"); //
 const mongoSanitize = require("express-mongo-sanitize");
@@ -114,6 +115,8 @@ app.use(
     ],
   })
 );
+
+app.use(compression());
 
 app.use((req, res, next) => {
   console.log("request sent to server");
