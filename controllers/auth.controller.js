@@ -42,8 +42,8 @@ const signup = catchAsync(async (req, res, next) => {
     passwordChangedAt: req.body.passwordChangedAt,
   });
   const url = `${req.protocol}://${req.get("host")}/me`;
-  await new Email(newUser, url).sendWelcome();
   createSendToken(newUser, 201, res);
+  await new Email(newUser, url).sendWelcome();
 });
 
 const login = catchAsync(async (req, res, next) => {
