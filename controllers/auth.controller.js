@@ -15,15 +15,14 @@ function signToken(id) {
 
 function createSendToken(user, statusCode, req, res) {
   const token = signToken(user._id);
-  const cookieOptions = {
+
+  res.cookie("jwt", token, {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 90 * 24 * 60 * 60 * 1000
     ),
     httpOnly: true,
     secure: req.secure || req.headers("x-forwarded-proto") === "https",
-  };
-
-  res.cookie("jwt", token, cookieOptions);
+  });
   user.password = undefined;
   res.status(statusCode).json({
     status: "success",
@@ -252,7 +251,7 @@ const updateEmail = catchAsync(async (req, res, next) => {
   if (!verify) {
     return next(new AppError("Yanlis sifre", 401));
   }
-  const oldMail = user.email;
+
   user.email = req.body.email;
   user.password = req.body.password;
   user.passwordConfirm = req.body.passwordConfirm;
