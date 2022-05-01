@@ -43,8 +43,8 @@ const signup = catchAsync(async (req, res, next) => {
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
   });
-  // const url = `${req.protocol}://${req.get("host")}/me`;
-  // await new Email(newUser, url).sendWelcome();
+  const url = "https://natours-alp.herokuapp.com/me";
+  await new Email(newUser, url).sendWelcome();
   createSendToken(newUser, 201, req, res);
 });
 
