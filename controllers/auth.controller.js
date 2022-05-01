@@ -39,11 +39,10 @@ const signup = catchAsync(async (req, res, next) => {
     email: req.body.email,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
-    passwordChangedAt: req.body.passwordChangedAt,
   });
   const url = `${req.protocol}://${req.get("host")}/me`;
-  createSendToken(newUser, 201, req, res);
   await new Email(newUser, url).sendWelcome();
+  createSendToken(newUser, 201, req, res);
 });
 
 const login = catchAsync(async (req, res, next) => {

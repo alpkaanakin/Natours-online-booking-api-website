@@ -18,7 +18,7 @@ export const signUp = async (email, username, password,passwordConfirm) => {
       showAlert('success', 'Signed up Succesfuly!');
       window.setTimeout(() => {
         location.assign('/');
-      }, 1500);
+      }, 2500);
     }
   } catch (err) {
     showAlert('error', err.response.data.message);
