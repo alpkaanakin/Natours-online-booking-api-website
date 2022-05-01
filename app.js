@@ -4,6 +4,7 @@ const morgan = require("morgan");
 const rateLimit = require("express-rate-limit");
 const helmet = require("helmet");
 const compression = require("compression");
+const cors = require("cors");
 
 const xss = require("x-xss-protection"); //
 const mongoSanitize = require("express-mongo-sanitize");
@@ -20,6 +21,12 @@ const viewRoutes = require("./routes/view.routes");
 const bookingRoutes = require("./routes/booking.routes");
 
 const app = express();
+
+//Implement cors
+app.use(cors());
+
+app.options("*", cors());
+// app.options("/api/tours/:id", cors());
 
 //Enable Proxy
 app.enable("trust proxy");
