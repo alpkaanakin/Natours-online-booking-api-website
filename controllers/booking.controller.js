@@ -4,9 +4,8 @@ const Booking = require("../models/booking-model");
 const User = require("../models/user-models");
 const catchAsync = require("../util/catchAsync");
 const handlerFactory = require("./handlerFactory");
-const AppError = require("../util/appError");
 
-const getCheckoutSession = async (req, res, next) => {
+const getCheckoutSession = catchAsync(async (req, res, next) => {
   // Get tour data //
   const tour = await Tour.findById(req.params.tourId);
   // Create stripe session //
@@ -22,8 +21,10 @@ const getCheckoutSession = async (req, res, next) => {
     line_items: [
       {
         name: `${tour.name} Tour`,
-        description: `${tour.summary}`,
-        images: `${req.protocol}://${req.get("host")}/${tour.imageCover}`,
+        description: tour.summary,
+        images: `${req.protocol}://${req.get("host")}/img/tours${
+          tour.imageCover
+        }`,
         amount: tour.price * 100,
         currency: "usd",
         quantity: 1,
@@ -32,10 +33,10 @@ const getCheckoutSession = async (req, res, next) => {
   });
   // Send session as response
   res.status(200).json({
-    status: "sucess",
+    status: "success",
     session,
   });
-};
+});
 
 // const createBookingCheckout = catchAsync(async (req, res, next) => {
 //   // Unsecure //
@@ -55,7 +56,7 @@ async function createBookingCheckout(session) {
 }
 
 const webhookCheckout = (req, res, next) => {
-  const signature = req.headers.stripe["stripe-signature"];
+  const signature = req.headers["stripe-signature"];
   let event;
   try {
     event = stripe.webhooks.construckEvent(
