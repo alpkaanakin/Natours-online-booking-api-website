@@ -1,7 +1,7 @@
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const Tour = require("../models/tour-models");
 const Booking = require("../models/booking-model");
-const User = require("../models/user");
+const User = require("../models/user-models");
 const catchAsync = require("../util/catchAsync");
 const handlerFactory = require("./handlerFactory");
 const AppError = require("../util/appError");
@@ -23,7 +23,7 @@ const getCheckoutSession = async (req, res, next) => {
       {
         name: `${tour.name} Tour`,
         description: `${tour.summary}`,
-        images: [`https://www.natours.dev/img/tours/${tour.imageCover}`],
+        images: `${req.protocol}://${req.get("host")}/${tour.imageCover}`,
         amount: tour.price * 100,
         currency: "usd",
         quantity: 1,
