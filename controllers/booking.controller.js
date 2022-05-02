@@ -1,6 +1,7 @@
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const Tour = require("../models/tour-models");
 const Booking = require("../models/booking-model");
+const User = require("../models/user");
 const catchAsync = require("../util/catchAsync");
 const handlerFactory = require("./handlerFactory");
 const AppError = require("../util/appError");
@@ -11,9 +12,10 @@ const getCheckoutSession = async (req, res, next) => {
   // Create stripe session //
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
-    success_url: `${req.protocol}://${req.get("host")}/?tour=${
-      req.params.tourId
-    }&user=${req.user.id}&price=${tour.price}`,
+    // success_url: `${req.protocol}://${req.get("host")}/?tour=${
+    //   req.params.tourId
+    // }&user=${req.user.id}&price=${tour.price}`,
+    success_url: `${req.protocol}://${req.get("host")}/my-tours`,
     cancel_url: `${req.protocol}://${req.get("host")}/tour/${tour.slug}`,
     customer_email: req.user.email,
     client_reference_id: req.params.tourId,
@@ -35,15 +37,39 @@ const getCheckoutSession = async (req, res, next) => {
   });
 };
 
-const createBookingCheckout = catchAsync(async (req, res, next) => {
-  // Unsecure //
-  const { tour, user, price } = req.query;
-  if (!tour && !user && !price) {
-    return next();
-  }
+// const createBookingCheckout = catchAsync(async (req, res, next) => {
+//   // Unsecure //
+//   const { tour, user, price } = req.query;
+//   if (!tour && !user && !price) {
+//     return next();
+//   }
+//   await Booking.create({ tour, user, price });
+//   res.redirect(req.originalUrl.split("?")[0]);
+// });
+
+async function createBookingCheckout(session) {
+  const tour = session.client.reference_id;
+  const user = await User.findOne({ email: session.customer_email }).id;
+  const price = session.line_items[0].amount / 100;
   await Booking.create({ tour, user, price });
-  res.redirect(req.originalUrl.split("?")[0]);
-});
+}
+
+const webhookCheckout = (req, res, next) => {
+  const signature = req.headers.stripe["stripe-signature"];
+  let event;
+  try {
+    event = stripe.webhooks.construckEvent(
+      req.body,
+      signature,
+      process.env.STRIPE_WEBHOOK_SECRET
+    );
+  } catch (err) {
+    return res.status(400).send(`Webhook error: ${err.message}`);
+  }
+  if (event.type === "checkout.session.completed")
+    createBookingCheckout(event.data.object);
+  res.status(200).json({ received: true });
+};
 
 const createBooking = handlerFactory.createOne(Booking);
 const getBooking = handlerFactory.getOne(Booking);
@@ -59,4 +85,5 @@ module.exports = {
   getAllBookings: getAllBookings,
   updateBooking: updateBooking,
   deleteBooking: deleteBooking,
+  webhookCheckout: webhookCheckout,
 };
