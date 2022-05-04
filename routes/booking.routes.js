@@ -1,5 +1,4 @@
 const express = require("express");
-const tourController = require("../controllers/tour.controllers");
 const authController = require("../controllers/auth.controller");
 const bookingController = require("../controllers/booking.controller");
 
