@@ -19,4 +19,4 @@ You can register, log in, change your password and make payment using the applic
 - Stripe
 - Mapbox
 
-** Important Note **: this website was designed and coded thanks to what I learned from [Jonas Schmedtmann](https://github.com/jonasschmedtmann) Udemy course [Click here to access the courses](https://www.udemy.com/user/jonasschmedtmann/)
+This website was designed and coded thanks to what I learned from [Jonas Schmedtmann](https://github.com/jonasschmedtmann) Udemy course [Click here to access the courses](https://www.udemy.com/user/jonasschmedtmann/)
